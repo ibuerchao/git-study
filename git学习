@@ -21,7 +21,7 @@ git config --global user.email "email@example.com"
 版本回退
 1.git log	命令显示从最近到最远的提交日志
 2.git log --pretty=oneline
-3.在Git中，用HEAD表示当前版本，也就是最新的提交，上一个版本就是HEAD^，上上一个版本就是HEAD^^，当然往上100个版本写100个^比较容易数不过来，所以写成HEAD~100。
+3.在Git中，用HEAD表示当前版本，即最新的提交，上一个版本就是HEAD^，上上一个版本就是HEAD^^，当然往上100个版本写100个^比较容易数不过来，所以写成HEAD~100。
 4.git reset --hard HEAD^
 5.git reset --hard 1094a回退到指定版本，版本号没必要写全，前几位就可以了，Git会自动去找
 6.git reflog用来记录你的每一次命令
@@ -29,7 +29,8 @@ git config --global user.email "email@example.com"
 工作区和暂存区
 第一步是用git add把文件添加进去，实际上就是把文件修改添加到暂存区；
 第二步是用git commit提交更改，实际上就是把暂存区的所有内容提交到当前分支。
-因为我们创建Git版本库时，Git自动为我们创建了唯一一个master分支，所以，现在，git commit就是往master分支上提交更改。你可以简单理解为，需要提交的文件修改通通放到暂存区，然后，一次性提交暂存区的所有修改。
+因为我们创建Git版本库时，Git自动为我们创建了唯一一个master分支，所以，现在，gitcommit就是往master分支上提交更改。你可以简单理解为，需要提交的文件修改
+通通放到暂存区，然后，一次性提交暂存区的所有修改。
 ==================================================================================================
 管理修改
 git diff HEAD -- readme.txt命令可以查看工作区和版本库里面最新版本的区别
@@ -44,3 +45,23 @@ git reset HEAD <file>可以把暂存区的修改撤销掉（unstage），重新�
 ==================================================================================================
 创建ssh key
 ssh-keygen -t rsa -C "myemail@xxx.com"
+如何同一电脑上进行多个github账号配置？
+1.生成一个新的ssh key
+ssh-keygen -t rsa -C "newemail@xxx.com"(注意指定新生成的文件名，不能与之前的相同，否则就会被覆盖)
+2.配置config,修改~/.ssh/config文件(如果没有则新建)，加入如下内容
+Host github.com
+    HostName github.com
+    PreferredAuthentications publickey
+    IdentityFile ~/.ssh/id_rsa
+Host github_test
+    HostName github.com
+    PreferredAuthentications publickey
+    IdentityFile ~/.ssh/id_rsa_2
+3.将新生成的id_rsa_2.pub添加关联到第二个Github账号中，即add ssh key到github账号
+4.构建本地库，指定一个目录后执行git init
+5.执行git add <file>
+6.执行git commit -m "comments"将文件添加提交到本地库后
+7.git remote add origin git@github_test:ibuerchao/git-study.git
+注意，把上面的ibuerchao是自己的GitHub账户名，否则，你在本地关联的就是别人的远程库，github_test是第二个账号的别名配置
+8.git push -u origin master本地库关联远程库后执行此命令将本地库推送到远程库(首次推送加上了-u参数)
+9.git push origin master每次本地提交后推送最新修改
